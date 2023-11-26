@@ -108,7 +108,7 @@ for lag in lags:
     
     y_pred = best_model.predict(X_test)
     
-    
+    ##TODO: add other performance metrics
     r2  = r2_score(y_test, y_pred)
     
     # Store MSE value in the dictionary
