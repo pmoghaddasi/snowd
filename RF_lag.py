@@ -27,7 +27,7 @@ from sklearn.metrics import r2_score
 
 s=time.time()
 
-input_file_path = r'C:\Users\pmoghaddasi\Desktop\Snow\proposal_basins\merged_hysets_daymet_GLDAS_AMSR_snowdas_UAZ_MERRA2_hysets_09112200.csv'
+input_file_path = 'merged_hysets_daymet_GLDAS_AMSR_snowdas_UAZ_MERRA2_hysets_09112200.csv'
 # Read the CSV file
 df = pd.read_csv(input_file_path)
 
