@@ -86,8 +86,8 @@ for lag in lags:
     y = df[target]
 
     
-    X_train1, X_test, y_train1, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
-    X_train, X_val, y_train, y_val = train_test_split(X_train1, y_train1, test_size=0.15, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
+    #X_train, X_val, y_train, y_val = train_test_split(X_train1, y_train1, test_size=0.15, random_state=42)
     
     
     forest_para = {'n_estimators':[10,20,50,75,100,200,300], 'max_depth':[2,3,4,5,7,10],'min_samples_leaf':[2,4,6,8,10], 'random_state':[42]}
