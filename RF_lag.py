@@ -93,13 +93,12 @@ for lag in lags:
     y_test = y[int(n*0.85):]
     X_train, y_train= shuffle(X_train, y_train, random_state=42)
     
-    ##TODO: do this with pandas
+    # Normalize the data
     mean_train_X = X_train.mean()
     mean_train_y = y_train.mean()
 
     std_train_X = X_train.std()
     std_train_y = y_train.std()
-    
     
     
     X_train = (X_train - mean_train_X)/ std_train_X
