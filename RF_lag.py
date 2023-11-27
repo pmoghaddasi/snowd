@@ -21,6 +21,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_absolute_error
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
+from sklearn.utils import shuffle
 
 
 
@@ -84,9 +85,15 @@ for lag in lags:
     # Split the data into training and testing sets
     X = df[lagged_features]
     y = df[target]
-
     
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
+    n = len(X)    
+    X_train = X[:int(n*0.85)]
+    X_test = X[int(n*0.85):]
+    y_train = y[:int(n*0.85)]
+    y_test = y[int(n*0.85):]
+    X_train, y_train= shuffle(X_train, y_train, random_state=42)
+
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
     #X_train, X_val, y_train, y_val = train_test_split(X_train1, y_train1, test_size=0.15, random_state=42)
     
     
