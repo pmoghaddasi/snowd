@@ -94,11 +94,13 @@ for lag in lags:
     X_train, y_train= shuffle(X_train, y_train, random_state=42)
     
     ##TODO: do this with pandas
-    mean_train_X = np.mean(X_train)
-    mean_train_y = np.mean(y_train)
+    mean_train_X = X_train.mean()
+    mean_train_y = y_train.mean()
 
-    std_train_X = np.std(X_train)
-    std_train_y = np.std(y_train)    
+    std_train_X = X_train.std()
+    std_train_y = y_train.std()
+    
+    
     
     X_train = (X_train - mean_train_X)/ std_train_X
     X_test = (X_test - mean_train_X)/ std_train_X
