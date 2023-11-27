@@ -92,6 +92,18 @@ for lag in lags:
     y_train = y[:int(n*0.85)]
     y_test = y[int(n*0.85):]
     X_train, y_train= shuffle(X_train, y_train, random_state=42)
+    
+    mean_train_X = np.mean(X_train)
+    mean_train_y = np.mean(y_train)
+
+    std_train_X = np.std(X_train)
+    std_train_y = np.std(y_train)    
+    
+    X_train = (X_train - mean_train_X)/ std_train_X
+    X_test = (X_test - mean_train_X)/ std_train_X
+    
+    y_train = (y_train - mean_train_y)/ std_train_y
+    y_test = (y_test - mean_train_y)/ std_train_y    
 
     #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
     #X_train, X_val, y_train, y_val = train_test_split(X_train1, y_train1, test_size=0.15, random_state=42)
