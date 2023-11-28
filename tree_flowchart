@@ -1,0 +1,15 @@
+// Tree Flowchart
+digraph {
+	A [label=Start]
+	B [label="Node 1"]
+	C [label="Node 2"]
+	D [label="Node 3"]
+	E [label="Node 4"]
+	F [label=End]
+	A -> B
+	A -> C
+	B -> D
+	C -> E
+	D -> F
+	E -> F
+}

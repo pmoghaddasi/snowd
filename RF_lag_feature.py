@@ -21,6 +21,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_absolute_error
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
+from sklearn.utils import shuffle
 
 
 
@@ -88,9 +89,27 @@ for feature in features:
         X = df[lagged_features]
         y = df[target]
 
+            
+        n = len(X)    
+        X_train = X[:int(n*0.85)]
+        X_test = X[int(n*0.85):]
+        y_train = y[:int(n*0.85)]
+        y_test = y[int(n*0.85):]
+        X_train, y_train= shuffle(X_train, y_train, random_state=42)
         
-        X_train1, X_test, y_train1, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
-        X_train, X_val, y_train, y_val = train_test_split(X_train1, y_train1, test_size=0.15, random_state=42)
+        # Normalize the data
+        mean_train_X = X_train.mean()
+        mean_train_y = y_train.mean()
+    
+        std_train_X = X_train.std()
+        std_train_y = y_train.std()
+        
+        
+        X_train = (X_train - mean_train_X)/ std_train_X
+        X_test = (X_test - mean_train_X)/ std_train_X
+        
+        y_train = (y_train - mean_train_y)/ std_train_y
+        y_test = (y_test - mean_train_y)/ std_train_y
         
         
         forest_para = {'n_estimators':[10,20,50,75,100,200,300], 'max_depth':[2,3,4,5,7,10],'min_samples_leaf':[2,4,6,8,10], 'random_state':[42]}
