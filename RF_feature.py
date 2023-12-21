@@ -21,8 +21,24 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_absolute_error
 import matplotlib.pyplot as plt
-from sklearn.metrics import r2_score
+from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.utils import shuffle
+
+
+def kge_metric(simulated, observed):
+    """Calculate Kling-Gupta Efficiency (KGE)."""
+    mean_sim = np.mean(simulated)
+    mean_obs = np.mean(observed)
+
+    std_sim = np.std(simulated)
+    std_obs = np.std(observed)
+
+    correlation = np.corrcoef(simulated, observed)[0, 1]
+
+    kge = 1 - np.sqrt((correlation - 1) ** 2 + (std_sim / std_obs - 1) ** 2 + (mean_sim / mean_obs - 1) ** 2)
+
+    return kge
+
 
 
 
@@ -72,6 +88,8 @@ features = ['swe_daymet','swe_UAZ','swe_GLDAS', 'snow_depth_water_equivalent_mea
 
 # Initialize an empty dictionary to store MSE values
 r2_values = {}
+mse_values = {}
+kge_values = {}
 
 # Loop through each feature
 for feature in features:
@@ -130,13 +148,24 @@ for feature in features:
     y_pred = best_model.predict(X_test)
     
     
-    r2  = r2_score(y_test, y_pred)
+    # r2  = r2_score(y_test, y_pred)
     
     # Store MSE value in the dictionary
-    r2_values [(feature, lag)] = r2 
+    # r2_values [(feature, lag)] = r2 
+    
+    
+    r2  = r2_score(y_test, y_pred)
+    mse = mean_squared_error(y_test, y_pred)
+    kge = kge_metric(y_pred, y_test)
+    
+    # Store metric value in the dictionary
+    r2_values [feature] = r2 
+    mse_values[feature] = mse
+    kge_values[feature] = kge
 
     print(f"For {feature}, R-squared: {r2}")
         
 print("R-squared values:", r2_values )
-
+print("Mean Squared Error (MSE) values:", mse_values)
+print("Kling-Gupta Efficiency (KGE) values:", kge_values)
 

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Nov 22 19:24:36 2023
+Created on Thu Dec 21 15:09:18 2023
 
 @author: pmoghaddasi
 """
+
 
 import pandas as pd
 import numpy as np
@@ -23,6 +24,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.utils import shuffle
 from sklearn.model_selection import TimeSeriesSplit
+from sklearn.linear_model import LinearRegression
 
 
 
@@ -136,32 +138,20 @@ for feature in features:
         y_train = (y_train - mean_train_y)/ std_train_y
         y_test = (y_test - mean_train_y)/ std_train_y
         
-        
-        forest_para = {'n_estimators':[10,20,50,75,100,200,300], 'max_depth':[2,3,4,5,7,10],'min_samples_leaf':[2,4,6,8,10], 'random_state':[42]}
-        
-                
-        forest_reg = RandomForestRegressor()
-        
-        
-        # grid_search = GridSearchCV(forest_reg, forest_para, cv=5, scoring='neg_mean_squared_error',
-        # return_train_score=True)
-        
-        
-        # grid_search.fit(X_train, y_train)
-        
-        # Define time series cross-validator
-        # tscv = TimeSeriesSplit(n_splits=5)
-        
-        # grid_search = GridSearchCV(forest_reg, forest_para, cv=tscv.split(X_train), scoring='neg_mean_squared_error', return_train_score=True)
-        grid_search = GridSearchCV(forest_reg, forest_para, cv=5, scoring='neg_mean_squared_error', return_train_score=True)
+        linear_reg = LinearRegression()
+        linear_reg.fit(X_train, y_train)
 
-        grid_search.fit(X_train, y_train)
-   
-        print(grid_search.best_params_)
+        # Predict on the test set
+        y_pred = linear_reg.predict(X_test)
         
-        best_model = grid_search.best_estimator_
+        # Plotting
+        plt.figure(figsize=(8, 6))
+        plt.scatter(y_test, y_pred, alpha=0.5)
+        plt.title(f"Simulated vs Observed for {feature} with lag {lag}")
+        plt.xlabel("Observed Streamflow")
+        plt.ylabel("Simulated Streamflow")
+        plt.show()
         
-        y_pred = best_model.predict(X_test)
         
         
         r2  = r2_score(y_test, y_pred)
@@ -180,34 +170,7 @@ print("Mean Squared Error (MSE) values:", mse_values)
 print("Kling-Gupta Efficiency (KGE) values:", kge_values)
 
 
-# Extract feature names and lags for labeling
-feature_labels = [feature for feature in features for lag in lags]
-lag_labels = [lag for feature in features for lag in lags]
 
-# Create a list of colors for better visualization
-colors = ['b', 'g', 'r', 'c', 'm', 'y']
-
-# Plot R-squared values
-plt.figure(figsize=(12, 6))
-for i, (key, value) in enumerate(r2_values.items()):
-    feature, lag = key
-    plt.bar(i, value, color=colors[i % len(colors)], label=f'{feature} with lag {lag}')
-
-# Set x-axis labels and ticks
-plt.xticks(range(len(r2_values)), [f'{feature_labels[i]}\n(Lag {lag_labels[i]})' for i in range(len(r2_values))], rotation=45, ha='right')
-
-# Set y-axis label
-plt.ylabel('R-squared Value')
-
-# # Add legend
-# plt.legend()
-
-# Set plot title
-plt.title('R-squared Values for Different Feature-Lag Combinations')
-
-# Show the plot
-plt.tight_layout()
-plt.show()
 
 
 
