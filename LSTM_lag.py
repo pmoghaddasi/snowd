@@ -46,7 +46,7 @@ def kge_metric(simulated, observed):
 
 
 # Read the CSV file
-input_file_path = r'C:\Users\pmoghaddasi\Desktop\Snow\proposal_basins\merged_hysets_daymet_GLDAS_AMSR_snowdas_UAZ_MERRA2_hysets_09112200.csv'
+input_file_path = 'merged_hysets_daymet_GLDAS_AMSR_snowdas_UAZ_MERRA2_hysets_09112200.csv'
 df = pd.read_csv(input_file_path)
 
 # Select the desired columns
@@ -100,8 +100,9 @@ for lag in lags:
     # Define the target variable
     target_column = 'streamflow'
 
-
-    X_seq, y_seq = create_sequences(df[[f'{feature}_{lag}_lag' for feature in features] + [target_column]],
+    lag = 5
+    
+    X_seq, y_seq = create_sequences(df[[f'{feature}_0_lag' for feature in features] + [target_column]],
                              n_past=lag+1, n_future=1)
     
     # Train-test split
@@ -109,7 +110,7 @@ for lag in lags:
     X_train, X_test = X_seq[:split_point], X_seq[split_point:]
     y_train, y_test = y_seq[:split_point], y_seq[split_point:]
 
-
+    aa
     
     # Normalize the data
     mean_train_X = X_train.mean()

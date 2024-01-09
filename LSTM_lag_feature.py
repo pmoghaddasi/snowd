@@ -36,7 +36,7 @@ def kge_metric(simulated, observed):
 
 
 # Read the CSV file
-input_file_path = r'C:\Users\pmoghaddasi\Desktop\Snow\proposal_basins\merged_hysets_daymet_GLDAS_AMSR_snowdas_UAZ_MERRA2_hysets_09112200.csv'
+input_file_path = 'merged_hysets_daymet_GLDAS_AMSR_snowdas_UAZ_MERRA2_hysets_09112200.csv'
 df = pd.read_csv(input_file_path)
 
 # Select the desired columns
@@ -89,18 +89,20 @@ for feature in features:
     # Loop through each lag
     for lag in lags:
 
-
+        lag = 5
         # Define the target variable
         target_column  = 'streamflow'
         
 
-        X_seq, y_seq = create_sequences(df[[f'{feature}_{lag}_lag'] + [target_column]],
+        X_seq, y_seq = create_sequences(df[[f'{feature}_0_lag'] + [target_column]],
                                  n_past=lag+1, n_future=1)
         
         # Train-test split
         split_point = int(0.8 * len(X_seq))
         X_train, X_test = X_seq[:split_point], X_seq[split_point:]
         y_train, y_test = y_seq[:split_point], y_seq[split_point:]
+        
+        
 
         # Normalize the data
         mean_train_X = X_train.mean()
@@ -118,10 +120,12 @@ for feature in features:
         
         # Build and train the LSTM model
         model = Sequential()
-        model.add(LSTM(units=50, activation='relu', input_shape=(X_train.shape[1], 1)))
+        model.add(LSTM(units=50, activation='relu', input_shape=(X_train.shape[1], 1), return_sequences=True))
+        model.add(LSTM(units=50, activation='relu', input_shape=(X_train.shape[1], 50)))
+        model.add(Dense(units=10))
         model.add(Dense(units=1))
         model.compile(optimizer='adam', loss='mse')
-        model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.1)
+        model.fit(X_train, y_train, epochs=30, batch_size=32, validation_split=0.2)
         
         # Evaluate the model
         loss = model.evaluate(X_test, y_test)
@@ -143,6 +147,7 @@ for feature in features:
         kge_values[(feature, lag)] = kge
 
         print(f"For {feature} with lag {lag}, R-squared: {r2}")
+        aa
 
 # Print final results
 print("R-squared values:", r2_values)
