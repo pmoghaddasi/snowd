@@ -56,7 +56,7 @@ df.set_index('date', inplace=True)
 features = ['swe_daymet', 'swe_UAZ', 'swe_GLDAS', 'snow_depth_water_equivalent_mean']
 
 # Define the list of lags for the moving averages
-lags = [0, 7, 14, 30, 60, 91]
+lags = [0, 7, 14, 30, 45, 60, 91, 120]
 
 # Calculate the moving averages for each specified column and each window size
 for column in features:
