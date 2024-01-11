@@ -89,7 +89,6 @@ for feature in features:
     # Loop through each lag
     for lag in lags:
 
-        lag = 5
         # Define the target variable
         target_column  = 'streamflow'
         
@@ -103,7 +102,6 @@ for feature in features:
         y_train, y_test = y_seq[:split_point], y_seq[split_point:]
         
         
-
         # Normalize the data
         mean_train_X = X_train.mean()
         mean_train_y = y_train.mean()
@@ -121,11 +119,11 @@ for feature in features:
         # Build and train the LSTM model
         model = Sequential()
         model.add(LSTM(units=50, activation='relu', input_shape=(X_train.shape[1], 1), return_sequences=True))
-        model.add(LSTM(units=50, activation='relu', input_shape=(X_train.shape[1], 50)))
-        model.add(Dense(units=10))
+        #model.add(LSTM(units=50, activation='relu', input_shape=(X_train.shape[1], 50)))
+        #model.add(Dense(units=10))
         model.add(Dense(units=1))
         model.compile(optimizer='adam', loss='mse')
-        model.fit(X_train, y_train, epochs=30, batch_size=32, validation_split=0.2)
+        model.fit(X_train, y_train, epochs=40, batch_size=32, validation_split=0.2)
         
         # Evaluate the model
         loss = model.evaluate(X_test, y_test)
@@ -147,7 +145,6 @@ for feature in features:
         kge_values[(feature, lag)] = kge
 
         print(f"For {feature} with lag {lag}, R-squared: {r2}")
-        aa
 
 # Print final results
 print("R-squared values:", r2_values)

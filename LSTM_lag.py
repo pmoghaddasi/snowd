@@ -80,11 +80,9 @@ df.dropna(inplace=True)
 def create_sequences(data, n_past, n_future):
     X, y = [], []
     for i in range(len(data) - n_past - n_future + 1):
-        X.append(data.iloc[i:i + n_past, 0])
-        y.append(data.iloc[i + n_past:i + n_past + n_future, 1])
+        X.append(data.iloc[i:i + n_past, :-1])  # Select all features except the last column (target)
+        y.append(data.iloc[i + n_past:i + n_past + n_future, -1])  # Select the last column as the target
     return np.array(X), np.array(y)
-
-
 
 
 
@@ -100,17 +98,16 @@ for lag in lags:
     # Define the target variable
     target_column = 'streamflow'
 
-    lag = 5
     
-    X_seq, y_seq = create_sequences(df[[f'{feature}_0_lag' for feature in features] + [target_column]],
+    X_seq, y_seq = create_sequences(df[[f'{feature}_0_lag' for feature in features]+[target_column]],
                              n_past=lag+1, n_future=1)
-    
+    print(df[[f'{feature}_0_lag' for feature in features] + [target_column]])
     # Train-test split
     split_point = int(0.8 * len(X_seq))
     X_train, X_test = X_seq[:split_point], X_seq[split_point:]
     y_train, y_test = y_seq[:split_point], y_seq[split_point:]
 
-    aa
+    
     
     # Normalize the data
     mean_train_X = X_train.mean()
@@ -128,10 +125,11 @@ for lag in lags:
     
     # Build and train the LSTM model
     model = Sequential()
-    model.add(LSTM(units=50, activation='relu', input_shape=(X_train.shape[1], 1)))
+    model.add(LSTM(units=50, activation='relu', input_shape=(X_train.shape[1], X_train.shape[2])))
+    model.add(Dense(units=10))
     model.add(Dense(units=1))
     model.compile(optimizer='adam', loss='mse')
-    model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.1)
+    model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2)
     
     # Evaluate the model
     loss = model.evaluate(X_test, y_test)
@@ -153,7 +151,7 @@ for lag in lags:
     kge_values[lag] = kge
 
     print(f"For {lag}, R-squared: {r2}")
-        
+    
 print("R-squared values:", r2_values )
 print("Mean Squared Error (MSE) values:", mse_values)
 print("Kling-Gupta Efficiency (KGE) values:", kge_values)
